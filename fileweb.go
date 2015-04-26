@@ -13,16 +13,8 @@ const (
 	UPLOAD_DIR = "./files"
 )
 
-const ()
-
-func checkError(str string, err error) {
-	if err != nil {
-		log.Fatal("ListenAndServen: ", err.Error())
-	}
-}
-
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	pageHead := `
+const (
+	pageHead = `
 	<!DOCTYPE html>
 	<html>
 	<head>
@@ -31,18 +23,26 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	</head>
 	<body>
 	`
-	pageForm := `
+	pageForm = `
 	<form method="POST" action="/upload" enctype="multipart/form-data">
 	Choose a file to upload: <input name="file" type="file">
 	<input type="submit" value="Upload">
 	</form>
 	`
-	pageFoot := `
+	pageFoot = `
 	<a href="https://github.com/quant67/FileWeb" target="_blank">Fork me on GitHub</a>
 	</body>
 	</html>
 	`
+)
 
+func checkError(str string, err error) {
+	if err != nil {
+		log.Fatal("ListenAndServen: ", err.Error())
+	}
+}
+
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	fileInfoArr, err := ioutil.ReadDir("./files")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
