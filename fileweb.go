@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime/debug"
 )
 
 const (
@@ -37,6 +38,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	</form>
 	`
 	pageFoot := `
+	<a href="https://github.com/quant67/FileWeb" target="_blank">Fork me on GitHub</a>
 	</body>
 	</html>
 	`
@@ -103,10 +105,23 @@ func isExists(path string) bool {
 	return os.IsExist(err)
 }
 
+func safeHandler(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if e, ok := recover().(error); ok {
+				http.Error(w, e.Error(), http.StatusInternalServerError)
+				log.Println("WARN: panic in %v. - %v", fn, e)
+				log.Println(string(debug.Stack()))
+			}
+		}()
+		fn(w, r)
+	}
+}
+
 func main() {
 	mux := http.NewServeMux()
 	staticDirHandler(mux, "/files/", "./files", 0)
-	mux.HandleFunc("/", uploadHandler)
+	mux.HandleFunc("/", safeHandler(uploadHandler))
 	err := http.ListenAndServe(":80", mux)
 	checkError("ListenAndServe: ", err)
 }
