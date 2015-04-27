@@ -69,14 +69,17 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		defer f.Close()
 		t, err := os.Create(UPLOAD_DIR + "/" + filename)
 		if err != nil {
+			log.Print("Uploading: ", filename, " fail")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer t.Close()
 		if _, err := io.Copy(t, f); err != nil {
+			log.Print("Uploading: ", filename, " fail")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		log.Print("Uploading: ", filename, " fail")
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 }
