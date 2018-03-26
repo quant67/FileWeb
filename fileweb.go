@@ -30,7 +30,6 @@ const (
 	</form>
 	`
 	pageFoot = `
-	<a href="https://github.com/quant67/FileWeb" target="_blank">Fork me on GitHub</a>
 	</body>
 	</html>
 	`
